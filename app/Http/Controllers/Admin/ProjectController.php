@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,8 +19,10 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return view('admin.projects.create');
+        $types = Type::all();
+        return view('admin.projects.create', compact('types'));
     }
+
 
 
     public function store(Request $request)
@@ -27,20 +30,17 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'type_id' => 'nullable|exists:types,id'
         ]);
 
         if ($request->hasFile('image')) {
-
             $imagePath = $request->file('image')->store('cover_images', 'public');
-            
             $validated['cover_image'] = $imagePath;
         }
 
-        // Crea il progetto con i dati validati
-        $project = Project::create($validated);
+        Project::create($validated);
 
-        // Reindirizza con un messaggio di successo
         return redirect()->route('admin.projects.index')->with('success', 'Progetto creato con successo');
     }
 
@@ -53,8 +53,10 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        return view('admin.projects.edit', compact('project'));
+        $types = Type::all();
+        return view('admin.projects.edit', compact('project', 'types'));
     }
+
 
 
     public function update(Request $request, Project $project)
@@ -62,17 +64,16 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'type_id' => 'nullable|exists:types,id'
         ]);
 
         if ($request->hasFile('image')) {
-
             if ($project->cover_image) {
                 Storage::disk('public')->delete($project->cover_image);
             }
 
             $imagePath = $request->file('image')->store('cover_images', 'public');
-            
             $validated['cover_image'] = $imagePath;
         }
 
@@ -80,6 +81,7 @@ class ProjectController extends Controller
 
         return redirect()->route('admin.projects.index')->with('success', 'Progetto aggiornato con successo');
     }
+
 
 
     public function destroy(Project $project)

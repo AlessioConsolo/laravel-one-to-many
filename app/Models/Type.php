@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Type extends Model
 {
-    protected $fillable = ['name', 'slug'];
+    use HasFactory;
 
-    // Definisci la relazione one-to-many
-    public function projects(): HasMany
+    public function projects()
     {
         return $this->hasMany(Project::class);
     }

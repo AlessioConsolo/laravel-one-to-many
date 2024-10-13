@@ -1,24 +1,45 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
-    <div class="container">
-        <h1>Crea Nuovo Progetto</h1>
+    <h1>Crea Nuovo Progetto</h1>
 
-        <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <label for="name">Nome Progetto:</label>
-            <input type="text" id="name" name="name" required>
+    <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group">
+            <label for="title">Titolo</label>
+            <input type="text" name="title" class="form-control" value="{{ old('title') }}">
+        </div>
 
-            <label for="description">Descrizione:</label>
-            <textarea id="description" name="description" required></textarea>
+        <div class="form-group">
+            <label for="description">Descrizione</label>
+            <textarea name="description" class="form-control">{{ old('description') }}</textarea>
+        </div>
 
-            <label for="image">Immagine di copertura:</label>
-            <input type="file" id="image" name="image">
+        <div class="form-group">
+            <label for="type_id">Tipologia</label>
+            <select name="type_id" class="form-control">
+                <option value="">Seleziona una tipologia</option>
+                @foreach ($types as $type)
+                    <option value="{{ $type->id }}">{{ $type->name }}</option>
+                @endforeach
+            </select>
+        </div>
 
-            <button type="submit" class="btn">Crea Progetto</button>
-        </form>
+        <div class="form-group">
+            <label for="cover_image">Immagine di Copertina</label>
+            <input type="file" name="cover_image" class="form-control">
+        </div>
 
-        <a href="{{ route('admin.projects.index') }}" class="btn">Torna alla lista dei progetti</a>
-    </div>
+        <button type="submit" class="btn btn-primary">Salva</button>
+    </form>
 @endsection
