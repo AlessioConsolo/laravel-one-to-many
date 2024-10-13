@@ -1,14 +1,14 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
-    <h1>Dettagli del Progetto: {{ $project->title }}</h1>
+    <div class="container">
+        <h1>{{ $project->title }}</h1>
+        <p>{{ $project->description }}</p>
 
-    <p>{{ $project->description }}</p>
+        @if ($project->type)
+            <p><strong>Tipologia:</strong> {{ $project->type->name }}</p>
+        @endif
 
-    @if ($project->cover_image)
-    <img src="{{ asset('storage/' . $project->cover_image) }}" alt="{{ $project->name }}" style="max-width: 300px;">
-    @endif
-
-
-    <a href="{{ route('admin.projects.index') }}">Torna all'elenco progetti</a>
+        <img src="{{ asset('storage/' . $project->cover_image) }}" alt="{{ $project->title }}">
+    </div>
 @endsection
